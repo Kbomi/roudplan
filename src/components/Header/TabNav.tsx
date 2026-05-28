@@ -1,57 +1,66 @@
-'use client';
-import { TabType } from '@/types';
-import { TAB_LABELS, TAB_EMOJIS } from '@/constants/categories';
+"use client";
+import { TabType } from "@/types";
+import { TAB_LABELS, TAB_EMOJIS } from "@/constants/categories";
+import Image from "next/image";
+import Link from "next/link";
 
 interface Props {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
 }
 
-const TABS: TabType[] = ['life_plan', 'daily_record', 'baby_feed'];
+const TABS: TabType[] = ["life_plan", "daily_record", "baby_feed"];
 
 export default function TabNav({ activeTab, onTabChange }: Props) {
   return (
-    <header style={{
-      background: 'white',
-      borderBottom: '1px solid #f0f0f0',
-      padding: '0 32px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: 8,
-      height: 60,
-      boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-    }}>
+    <header
+      style={{
+        background: "white",
+        borderBottom: "1px solid #f0f0f0",
+        padding: "0 32px",
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        height: 60,
+        boxShadow: "0 1px 8px rgba(0,0,0,0.04)",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+      }}
+    >
       {/* 로고 */}
-      <div style={{
-        fontFamily: '"Nanum Pen Script", cursive',
-        fontSize: 22,
-        color: '#534AB7',
-        marginRight: 24,
-        letterSpacing: -0.5,
-      }}>🕐 하루시계</div>
+      <Link
+        href="https://kko-kkuri.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Image src="/logo.png" alt="Logo" width={60} height={60} />
+      </Link>
 
       {/* 탭 */}
-      <nav style={{ display:'flex', gap:4 }}>
-        {TABS.map(tab => (
+      <nav style={{ display: "flex", gap: 4 }}>
+        {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => onTabChange(tab)}
             style={{
-              padding: '7px 18px',
+              padding: "7px 18px",
               borderRadius: 24,
-              border: activeTab === tab ? '1.5px solid #7F77DD' : '1.5px solid transparent',
-              background: activeTab === tab ? '#EEEDFE' : 'transparent',
-              color: activeTab === tab ? '#534AB7' : '#999',
-              fontFamily: '"Nanum Pen Script", cursive',
+              border:
+                activeTab === tab
+                  ? "1.5px solid #7F77DD"
+                  : "1.5px solid transparent",
+              background: activeTab === tab ? "#EEEDFE" : "transparent",
+              color: activeTab === tab ? "#534AB7" : "#999",
+              fontFamily: '"Gaegu", cursive',
               fontSize: 15,
-              cursor: 'pointer',
+              cursor: "pointer",
               fontWeight: activeTab === tab ? 600 : 400,
-              transition: 'all 0.15s',
+              transition: "all 0.15s",
             }}
-          >{TAB_EMOJIS[tab]} {TAB_LABELS[tab]}</button>
+          >
+            {TAB_EMOJIS[tab]} {TAB_LABELS[tab]}
+          </button>
         ))}
       </nav>
     </header>

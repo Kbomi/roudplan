@@ -8,7 +8,7 @@ export interface Segment {
   endMinute: number;
   label: string;
   color: string;
-  emoji: string;
+  // emoji: string;
 }
 
 export interface Sticker {

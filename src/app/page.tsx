@@ -70,43 +70,17 @@ export default function Home() {
           display: "flex",
           flexDirection: "column",
           gap: 20,
+          maxWidth: 1400,
+          margin: "0 auto",
         }}
       >
-        {/* 이름 입력 */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <input
-            placeholder="이름을 입력하세요"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            maxLength={10}
-            style={{
-              fontFamily: '"Nanum Pen Script", cursive',
-              fontSize: 20,
-              border: "none",
-              borderBottom: "2px solid #ddd",
-              background: "transparent",
-              outline: "none",
-              width: 160,
-              paddingBottom: 2,
-              color: "#444",
-            }}
-          />
-          <span
-            style={{
-              fontFamily: '"Nanum Pen Script", cursive',
-              fontSize: 20,
-              color: "#666",
-            }}
-          >
-            {TAB_TITLE_SUFFIX[tab]}
-          </span>
-        </div>
-
         {/* 작업 영역 */}
         <div
+          className="work-area"
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 400px",
+            // gridTemplateColumns: "1fr 400px",
+            gridTemplateColumns: "minmax(0, 1fr) clamp(320px, 35%, 420px)",
             gap: 24,
             alignItems: "start",
           }}
@@ -133,7 +107,6 @@ export default function Home() {
               style={{
                 position: "relative",
                 background: "white",
-                padding: 12,
                 borderRadius: 12,
               }}
             >
@@ -168,6 +141,36 @@ export default function Home() {
 
           {/* 우측: 입력 패널 */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {/* 이름 입력 */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <input
+                placeholder="이름을 입력하세요"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                maxLength={10}
+                style={{
+                  fontFamily: '"Gaegu", cursive',
+                  fontSize: 20,
+                  border: "none",
+                  borderBottom: "2px solid #ddd",
+                  background: "transparent",
+                  outline: "none",
+                  width: 160,
+                  paddingBottom: 2,
+                  color: "#444",
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: '"Gaegu", cursive',
+                  fontSize: 20,
+                  color: "#666",
+                }}
+              >
+                {TAB_TITLE_SUFFIX[tab]}
+              </span>
+            </div>
+
             <div
               style={{
                 background: "white",
@@ -222,7 +225,7 @@ export default function Home() {
                   padding: "12px 16px",
                   fontSize: 14,
                   color: "#534AB7",
-                  fontFamily: '"Nanum Pen Script", cursive',
+                  fontFamily: '"Gaegu", cursive',
                   textAlign: "center",
                 }}
               >
@@ -241,6 +244,14 @@ export default function Home() {
           header, .action-bar, nav { display: none !important; }
           #clock-export-area { width: 100%; }
           main { padding: 0 !important; }
+        }
+        @media (max-width: 768px) {
+          .work-area {
+            grid-template-columns: 1fr !important;
+          }
+          main {
+            padding: 16px !important;
+          }
         }
       `}</style>
     </div>

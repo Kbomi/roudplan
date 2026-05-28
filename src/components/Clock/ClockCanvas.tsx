@@ -28,7 +28,7 @@ export default function ClockCanvas({
       style={{
         width: "100%",
         height: "auto",
-        fontFamily: '"Nanum Pen Script", cursive',
+        fontFamily: '"Gaegu", cursive',
       }}
     >
       {/* 손그림 필터 */}
@@ -74,7 +74,7 @@ export default function ClockCanvas({
         textAnchor="middle"
         fontSize="18"
         fill="#444"
-        style={{ fontFamily: '"Nanum Pen Script", cursive' }}
+        style={{ fontFamily: '"Gaegu", cursive' }}
       >
         {userName || "___"}
         {titleSuffix}
@@ -114,7 +114,7 @@ export default function ClockCanvas({
                 textAnchor="middle"
                 fontSize="11"
                 fill="#999"
-                style={{ fontFamily: '"Nanum Pen Script", cursive' }}
+                style={{ fontFamily: '"Gaegu", cursive' }}
               >
                 {h === 0 ? "0" : h}
               </text>
@@ -152,7 +152,7 @@ export default function ClockCanvas({
               opacity="0.85"
               filter="url(#sketchy)"
             />
-            <text
+            {/* <text
               x={labelPos.x}
               y={labelPos.y - 6}
               textAnchor="middle"
@@ -160,14 +160,14 @@ export default function ClockCanvas({
               style={{ userSelect: "none" }}
             >
               {seg.emoji}
-            </text>
+            </text> */}
             <text
               x={labelPos.x}
               y={labelPos.y + 10}
               textAnchor="middle"
               fontSize="9"
               fill="#555"
-              style={{ fontFamily: '"Nanum Pen Script", cursive' }}
+              style={{ fontFamily: '"Gaegu", cursive' }}
             >
               {seg.label}
             </text>
@@ -196,7 +196,7 @@ export default function ClockCanvas({
           textAnchor="middle"
           fontSize="13"
           fill="#666"
-          style={{ fontFamily: '"Nanum Pen Script", cursive' }}
+          style={{ fontFamily: '"Gaegu", cursive' }}
         >
           {comment}
         </text>

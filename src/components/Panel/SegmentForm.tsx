@@ -21,7 +21,7 @@ const defaultForm = {
   endTime: "10:00",
   label: "",
   color: PASTEL_COLORS[0].hex,
-  emoji: "",
+  // emoji: "",
 };
 
 export default function SegmentForm({
@@ -41,7 +41,7 @@ export default function SegmentForm({
         endTime: `${String(editTarget.endHour).padStart(2, "0")}:${String(editTarget.endMinute).padStart(2, "0")}`,
         label: editTarget.label,
         color: editTarget.color,
-        emoji: editTarget.emoji,
+        // emoji: editTarget.emoji,
       });
     } else {
       setForm(defaultForm);
@@ -68,7 +68,7 @@ export default function SegmentForm({
       endMinute: end.minute,
       label: form.label.trim(),
       color: form.color,
-      emoji: form.emoji,
+      // emoji: form.emoji,
     };
     const err = editTarget ? onUpdate(editTarget.id, seg) : onAdd(seg);
     if (err) {
@@ -106,11 +106,11 @@ export default function SegmentForm({
               style={{
                 ...chip,
                 background:
-                  form.emoji === cat.emoji && form.label === cat.label
-                    ? cat.defaultColor
-                    : "#f7f7f7",
+                  // form.emoji === cat.emoji &&
+                  form.label === cat.label ? cat.defaultColor : "#f7f7f7",
                 border:
-                  form.emoji === cat.emoji && form.label === cat.label
+                  // form.emoji === cat.emoji &&
+                  form.label === cat.label
                     ? "1.5px solid #7F77DD"
                     : "1px solid #e8e8e8",
               }}
@@ -123,7 +123,8 @@ export default function SegmentForm({
                 }))
               }
             >
-              {cat.emoji} {cat.label}
+              {/* {cat.emoji} {cat.label} */}
+              {cat.label}
             </button>
           ))}
         </div>
@@ -200,10 +201,42 @@ export default function SegmentForm({
               onClick={() => setForm((f) => ({ ...f, color: c.hex }))}
             />
           ))}
+
+          <label
+            title="직접 선택"
+            style={{ position: "relative", cursor: "pointer" }}
+          >
+            <div
+              style={{
+                width: 24,
+                height: 24,
+                borderRadius: "50%",
+                background:
+                  "conic-gradient(red, yellow, lime, cyan, blue, magenta, red)",
+                border: "2px solid #e0e0e0",
+                flexShrink: 0,
+              }}
+            />
+            <input
+              type="color"
+              value={form.color}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, color: e.target.value }))
+              }
+              style={{
+                position: "absolute",
+                opacity: 0,
+                width: 0,
+                height: 0,
+                top: 0,
+                left: 0,
+              }}
+            />
+          </label>
         </div>
       </div>
 
-      <div>
+      {/* <div>
         <div style={lbl}>
           스티커 <span style={{ color: "#bbb", fontWeight: 400 }}>(선택)</span>
         </div>
@@ -247,7 +280,7 @@ export default function SegmentForm({
             </button>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {error && (
         <div

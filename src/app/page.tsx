@@ -12,6 +12,7 @@ import StickerTray from "@/components/Panel/StickerTray";
 import ActionBar from "@/components/ActionBar/ActionBar";
 import { TAB_TITLE_SUFFIX, TAB_LABELS } from "@/constants/categories";
 import { generateComment } from "@/utils/generateComment";
+import StickerToolbar from "@/components/Clock/StickerToolbar";
 
 export default function Home() {
   const [tab, setTab] = useState<TabType>("life_plan");
@@ -123,7 +124,15 @@ export default function Home() {
                   inset: 12,
                   pointerEvents: stickers.length > 0 ? "auto" : "none",
                 }}
-                onClick={() => setSelectedId(null)}
+                // onClick={() => setSelectedId(null)}
+                onClick={(e) => {
+                  console.log(
+                    "🔴 overlay onClick fired, target===currentTarget:",
+                    e.target === e.currentTarget,
+                  );
+                  if (e.target === e.currentTarget) setSelectedId(null);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
               >
                 <StickerOverlay
                   stickers={stickers}
@@ -137,6 +146,25 @@ export default function Home() {
 
             {/* 스티커 트레이 */}
             <StickerTray tab={tab} onStickerClick={addSticker} />
+
+            {/* 스티커 툴바 — 선택된 스티커 있을 때만 표시 */}
+            <StickerToolbar
+              selectedSticker={
+                stickers.find((s) => s.id === selectedId) ?? null
+              }
+              onSizeChange={(delta) => {
+                if (!selectedId) return;
+                const s = stickers.find((st) => st.id === selectedId);
+                if (!s) return;
+                updateSticker(selectedId, {
+                  size: Math.max(20, Math.min(120, s.size + delta)),
+                });
+              }}
+              onDelete={() => {
+                if (selectedId) deleteSticker(selectedId);
+              }}
+              onDeselect={() => setSelectedId(null)}
+            />
           </div>
 
           {/* 우측: 입력 패널 */}

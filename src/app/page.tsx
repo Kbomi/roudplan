@@ -81,13 +81,16 @@ export default function Home() {
           style={{
             display: "grid",
             // gridTemplateColumns: "1fr 400px",
-            gridTemplateColumns: "minmax(0, 1fr) clamp(320px, 35%, 420px)",
-            gap: 24,
+            gridTemplateColumns: "minmax(0, 1fr) clamp(300px, 35%, 420px)",
+            gap: 20,
             alignItems: "start",
+            maxWidth: 1200,
+            margin: "0 auto",
           }}
         >
           {/* 좌측: 시계 */}
           <div
+            className="colock-preview"
             style={{
               background: "white",
               borderRadius: 16,
@@ -277,8 +280,8 @@ export default function Home() {
           .work-area {
             grid-template-columns: 1fr !important;
           }
-          main {
-            padding: 16px !important;
+          .main-container {
+            padding: 14px !important;
           }
         }
       `}</style>

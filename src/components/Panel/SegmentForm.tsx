@@ -177,6 +177,9 @@ export default function SegmentForm({
           value={form.label}
           onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
         />
+        <div style={{ fontSize: 10, color: "#bbb", marginTop: 3 }}>
+          짧을수록 시계에 예쁘게 표시돼요 🕐
+        </div>
       </div>
 
       <div>

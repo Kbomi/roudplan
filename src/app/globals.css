@@ -1,9 +1,56 @@
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 0; background: #f9f8ff; }
-button { font-family: inherit; }
-input, select { font-family: inherit; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  background: #f9f8ff;
+}
+button {
+  font-family: inherit;
+}
+input,
+select {
+  font-family: inherit;
+}
 
 /* 스크롤바 */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #f5f5f5; }
-::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 2px;
+}
+
+/* 모바일 레이아웃 */
+@media (max-width: 768px) {
+  .work-area {
+    grid-template-columns: 1fr !important;
+  }
+  .main-container {
+    padding: 16px !important;
+  }
+  .name-input-row {
+    margin-bottom: 4px;
+  }
+}
+
+/* 프린트 */
+@media print {
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  #clock-export-area {
+    width: 100%;
+    page-break-inside: avoid;
+  }
+}

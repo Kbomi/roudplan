@@ -42,6 +42,7 @@ export default function TabNav({ activeTab, onTabChange }: Props) {
         {TABS.map((tab) => (
           <button
             key={tab}
+            className="tab-btn"
             onClick={() => onTabChange(tab)}
             style={{
               padding: "7px 18px",
@@ -63,6 +64,16 @@ export default function TabNav({ activeTab, onTabChange }: Props) {
           </button>
         ))}
       </nav>
+
+      {/* 프린트 CSS */}
+      <style>{`
+        @media (max-width: 500px) {
+          .tab-btn {
+            font-size: 13px !important;
+            padding: 6px 14px !important;
+          }
+        }
+      `}</style>
     </header>
   );
 }

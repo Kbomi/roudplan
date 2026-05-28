@@ -25,11 +25,7 @@ export default function ClockCanvas({
     <svg
       viewBox="0 0 500 540"
       xmlns="http://www.w3.org/2000/svg"
-      style={{
-        width: "100%",
-        height: "auto",
-        fontFamily: '"Gaegu", cursive',
-      }}
+      style={{ width: "100%", height: "auto", fontFamily: '"Gaegu", cursive' }}
     >
       {/* 손그림 필터 */}
       <defs>
@@ -140,8 +136,82 @@ export default function ClockCanvas({
           seg.endHour,
           seg.endMinute,
         );
+
+        // 조각 각도 계산
+        const startAngle =
+          ((seg.startHour * 60 + seg.startMinute) / (24 * 60)) * 360;
+        let endAngle = ((seg.endHour * 60 + seg.endMinute) / (24 * 60)) * 360;
+        if (endAngle <= startAngle) endAngle += 360;
+        const spanAngle = endAngle - startAngle;
+
+        // 조각 넓이에 따라 한 줄 최대 글자 수 결정
+        const charsPerLine =
+          spanAngle >= 45
+            ? 6
+            : spanAngle >= 30
+              ? 4
+              : spanAngle >= 20
+                ? 3
+                : spanAngle >= 12
+                  ? 2
+                  : 2;
+
+        // 폰트 크기 (전체적으로 키움)
+        const fontSize =
+          spanAngle >= 30
+            ? 12
+            : spanAngle >= 20
+              ? 11
+              : spanAngle >= 12
+                ? 10
+                : 9;
+
+        // 텍스트를 공백 기준으로 먼저 나누고, 한 줄이 너무 길면 글자 수로 추가 분리
+        const wrapText = (text: string, maxChars: number): string[] => {
+          const words = text.split(" ");
+          const lines: string[] = [];
+          let current = "";
+
+          for (const word of words) {
+            if (current === "") {
+              current = word;
+            } else if ((current + word).length <= maxChars) {
+              current += " " + word;
+            } else {
+              lines.push(current);
+              current = word;
+            }
+          }
+          if (current) lines.push(current);
+
+          // 공백 없는 긴 단어는 글자 수로 추가 분리
+          const result: string[] = [];
+          for (const line of lines) {
+            if (line.length > maxChars) {
+              for (let i = 0; i < line.length; i += maxChars) {
+                result.push(line.slice(i, i + maxChars));
+              }
+            } else {
+              result.push(line);
+            }
+          }
+          return result.slice(0, 3);
+        };
+
+        const lines = wrapText(seg.label, charsPerLine);
+        // const hasEmoji = !!seg.emoji;
+        // const showEmoji = spanAngle >= 12;
+        const lineHeight = fontSize + 2;
+
+        // 전체 텍스트 블록 높이 계산해서 수직 중앙 정렬
+        const totalLines = lines.length;
+        // const emojiH = showEmoji && hasEmoji ? 18 : 0;
+        // const totalH = emojiH + totalLines * lineHeight;
+        const totalH = totalLines * lineHeight;
         const labelR = R * 0.65;
         const labelPos = polarToCartesian(CX, CY + 20, labelR, mid);
+        const startY = labelPos.y - totalH / 2;
+
         return (
           <g key={seg.id}>
             <path
@@ -152,24 +222,37 @@ export default function ClockCanvas({
               opacity="0.85"
               filter="url(#sketchy)"
             />
-            {/* <text
-              x={labelPos.x}
-              y={labelPos.y - 6}
-              textAnchor="middle"
-              fontSize="16"
-              style={{ userSelect: "none" }}
-            >
-              {seg.emoji}
-            </text> */}
+
+            {/* 이모지 */}
+            {/* {showEmoji && hasEmoji && (
+              <text
+                x={labelPos.x}
+                y={startY + 14}
+                textAnchor="middle"
+                fontSize={spanAngle >= 20 ? 15 : 12}
+                style={{ userSelect: "none" }}
+              >
+                {seg.emoji}
+              </text>
+            )} */}
+
+            {/* 줄바꿈 텍스트 */}
             <text
-              x={labelPos.x}
-              y={labelPos.y + 10}
               textAnchor="middle"
-              fontSize="9"
-              fill="#555"
-              style={{ fontFamily: '"Gaegu", cursive' }}
+              fontSize={fontSize}
+              fill="#444"
+              style={{ fontFamily: '"Gaegu", cursive', userSelect: "none" }}
             >
-              {seg.label}
+              {lines.map((line, i) => (
+                <tspan
+                  key={i}
+                  x={labelPos.x}
+                  // y={startY + emojiH + (i + 1) * lineHeight}
+                  y={startY + (i + 1) * lineHeight}
+                >
+                  {line}
+                </tspan>
+              ))}
             </text>
           </g>
         );

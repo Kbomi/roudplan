@@ -90,7 +90,7 @@ export default function Home() {
         >
           {/* 좌측: 시계 */}
           <div
-            className="colock-preview"
+            className="clock-preview"
             style={{
               background: "white",
               borderRadius: 16,
@@ -277,8 +277,15 @@ export default function Home() {
           main { padding: 0 !important; }
         }
         @media (max-width: 768px) {
+          main {
+            padding: 16px 12px !important;
+          }
           .work-area {
             grid-template-columns: 1fr !important;
+            gap: 16px !important;
+          }
+          .clock-preview {
+            padding: 12px !important;
           }
           .main-container {
             padding: 14px !important;

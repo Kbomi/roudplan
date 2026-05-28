@@ -32,6 +32,10 @@ select {
 @media (max-width: 768px) {
   .work-area {
     grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .clock-preview {
+    padding: 12px !important;
   }
   .main-container {
     padding: 16px !important;

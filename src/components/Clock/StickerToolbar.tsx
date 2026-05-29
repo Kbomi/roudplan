@@ -37,9 +37,13 @@ export default function StickerToolbar({
       }}
     >
       {/* 선택된 스티커 미리보기 */}
-      <span style={{ fontSize: 20, marginRight: 4 }}>
-        {selectedSticker.emoji}
-      </span>
+      <div style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 4 }}>
+        {selectedSticker.src ? (
+          <img src={selectedSticker.src} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        ) : (
+          <span style={{ fontSize: 20 }}>{selectedSticker.emoji}</span>
+        )}
+      </div>
 
       <div style={{ width: 1, height: 20, background: "#eee" }} />
 

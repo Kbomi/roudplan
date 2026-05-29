@@ -119,7 +119,20 @@ export default function StickerOverlay({
           }}
           onMouseDown={(e) => handleMouseDown(e, s.id)}
         >
-          {s.emoji}
+          {s.src ? (
+            <img
+              src={s.src}
+              alt="sticker"
+              style={{
+                width: "90%",
+                height: "90%",
+                objectFit: "contain",
+                pointerEvents: "none",
+              }}
+            />
+          ) : (
+            s.emoji
+          )}
 
           {/* 삭제 버튼 */}
           {selectedId === s.id && (

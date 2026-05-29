@@ -6,10 +6,11 @@ export function useStickers() {
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const addSticker = useCallback((emoji: string, cx = 250, cy = 250) => {
+  const addSticker = useCallback((stickerDef: { emoji?: string; src?: string }, cx = 250, cy = 250) => {
     const newSticker: Sticker = {
       id: uuidv4(),
-      emoji,
+      emoji: stickerDef.emoji,
+      src: stickerDef.src,
       x: cx,
       y: cy,
       size: 40,

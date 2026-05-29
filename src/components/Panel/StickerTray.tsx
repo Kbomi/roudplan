@@ -4,7 +4,7 @@ import { STICKER_SETS } from '@/constants/stickers';
 
 interface Props {
   tab: TabType;
-  onStickerClick: (emoji: string) => void;
+  onStickerClick: (stickerDef: { emoji?: string; src?: string }) => void;
 }
 
 export default function StickerTray({ tab, onStickerClick }: Props) {
@@ -24,11 +24,19 @@ export default function StickerTray({ tab, onStickerClick }: Props) {
               borderRadius:6, background:'white', border:'1px solid #e8e8e8',
               display:'flex', alignItems:'center', justifyContent:'center',
               transition:'transform 0.1s',
+              padding: 0,
+              overflow: 'hidden',
             }}
             onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.2)')}
             onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-            onClick={() => onStickerClick(s.emoji)}
-          >{s.emoji}</button>
+            onClick={() => onStickerClick({ emoji: s.emoji, src: s.src })}
+          >
+            {s.src ? (
+              <img src={s.src} alt={s.label} style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
+            ) : (
+              s.emoji
+            )}
+          </button>
         ))}
       </div>
     </div>

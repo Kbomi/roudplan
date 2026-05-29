@@ -13,7 +13,8 @@ export interface Segment {
 
 export interface Sticker {
   id: string;
-  emoji: string;
+  emoji?: string;
+  src?: string;
   x: number;
   y: number;
   size: number;

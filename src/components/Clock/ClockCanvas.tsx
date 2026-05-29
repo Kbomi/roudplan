@@ -267,9 +267,13 @@ export default function ClockCanvas({
         stroke="#eee"
         strokeWidth="1"
       />
-      <text x={CX} y={CY + 26} textAnchor="middle" fontSize="30">
-        🐰
-      </text>
+      <image
+        href="/clock-image.png"
+        x={CX - 36}
+        y={CY + 20 - 36}
+        width="70"
+        height="70"
+      />
 
       {/* 총평 (하루기록표/아기냠냠표) */}
       {comment && (

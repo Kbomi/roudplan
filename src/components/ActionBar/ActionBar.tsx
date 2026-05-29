@@ -7,10 +7,9 @@ import { exportAsImage, printElement } from "@/utils/exportImage";
 interface Props {
   tab: TabType;
   onClear: () => void;
-  stickers: Sticker[];
 }
 
-export default function ActionBar({ tab, onClear, stickers }: Props) {
+export default function ActionBar({ tab, onClear }: Props) {
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -21,7 +20,6 @@ export default function ActionBar({ tab, onClear, stickers }: Props) {
       await exportAsImage(
         "clock-export-area",
         `하루시계_${TAB_LABELS[tab]}_${dateStr}.png`,
-        stickers,
       );
     } catch (error) {
       console.error("저장 중 오류 발생:", error);

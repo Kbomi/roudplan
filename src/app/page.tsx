@@ -268,7 +268,7 @@ export default function Home() {
         </div>
       </main>
 
-      <ActionBar tab={tab} onClear={handleClearAll} stickers={stickers} />
+      <ActionBar tab={tab} onClear={handleClearAll} />
     </div>
   );
 }

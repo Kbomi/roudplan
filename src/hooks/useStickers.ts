@@ -13,7 +13,7 @@ export function useStickers() {
       src: stickerDef.src,
       x: cx,
       y: cy,
-      size: 40,
+      size: 60,
       rotation: 0,
     };
     setStickers(prev => [...prev, newSticker]);

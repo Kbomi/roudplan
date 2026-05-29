@@ -177,7 +177,7 @@ export default function SegmentForm({
           value={form.label}
           onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
         />
-        <div style={{ fontSize: 10, color: "#bbb", marginTop: 3 }}>
+        <div style={{ fontSize: 11, color: "#bbb", marginTop: 3 }}>
           짧을수록 시계에 예쁘게 표시돼요 🕐
         </div>
       </div>
@@ -314,13 +314,13 @@ export default function SegmentForm({
 }
 
 const lbl: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 13,
   color: "#888",
   marginBottom: 4,
   fontWeight: 500,
 };
 const chip: React.CSSProperties = {
-  fontSize: 12,
+  fontSize: 14,
   padding: "4px 9px",
   borderRadius: 20,
   cursor: "pointer",
@@ -330,7 +330,7 @@ const sel: React.CSSProperties = {
   padding: "7px 8px",
   borderRadius: 8,
   border: "1px solid #e8e8e8",
-  fontSize: 13,
+  fontSize: 15,
   background: "#fafafa",
   outline: "none",
 };
@@ -339,7 +339,7 @@ const inp: React.CSSProperties = {
   padding: "7px 10px",
   borderRadius: 8,
   border: "1px solid #e8e8e8",
-  fontSize: 13,
+  fontSize: 15,
   background: "#fafafa",
   outline: "none",
   boxSizing: "border-box",
@@ -352,7 +352,7 @@ const addBtn: React.CSSProperties = {
   color: "white",
   border: "none",
   cursor: "pointer",
-  fontSize: 13,
+  fontSize: 15,
   fontWeight: 600,
 };
 const cancelBtn: React.CSSProperties = {
@@ -362,5 +362,5 @@ const cancelBtn: React.CSSProperties = {
   color: "#666",
   border: "none",
   cursor: "pointer",
-  fontSize: 13,
+  fontSize: 15,
 };

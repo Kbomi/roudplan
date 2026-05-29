@@ -83,7 +83,7 @@ const clearBtn: React.CSSProperties = {
   color: "#888",
   border: "1px solid #e8e8e8",
   cursor: "pointer",
-  fontSize: 13,
+  fontSize: 15,
   whiteSpace: "nowrap",
   flexShrink: 0,
 };
@@ -94,7 +94,7 @@ const printBtn: React.CSSProperties = {
   color: "#534AB7",
   border: "1.5px solid #534AB7",
   cursor: "pointer",
-  fontSize: 13,
+  fontSize: 15,
   fontWeight: 500,
   whiteSpace: "nowrap",
 };
@@ -105,7 +105,7 @@ const saveBtn: React.CSSProperties = {
   color: "white",
   border: "none",
   cursor: "pointer",
-  fontSize: 13,
+  fontSize: 15,
   fontWeight: 600,
   whiteSpace: "nowrap",
 };

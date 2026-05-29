@@ -195,7 +195,7 @@ export default function Home() {
               <span
                 style={{
                   fontFamily: '"Gaegu", cursive',
-                  fontSize: 20,
+                  fontSize: 22,
                   color: "#666",
                 }}
               >

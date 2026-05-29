@@ -55,7 +55,7 @@ export default function TabNav({ activeTab, onTabChange }: Props) {
               background: activeTab === tab ? "#EEEDFE" : "transparent",
               color: activeTab === tab ? "#534AB7" : "#999",
               fontFamily: '"Gaegu", cursive',
-              fontSize: 15,
+              fontSize: 17,
               cursor: "pointer",
               fontWeight: activeTab === tab ? 600 : 400,
               transition: "all 0.15s",
@@ -70,7 +70,7 @@ export default function TabNav({ activeTab, onTabChange }: Props) {
       <style>{`
         @media (max-width: 500px) {
           .tab-btn {
-            font-size: 13px !important;
+            font-size: 15px !important;
             padding: 6px 14px !important;
           }
         }

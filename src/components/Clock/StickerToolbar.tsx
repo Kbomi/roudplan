@@ -55,7 +55,7 @@ export default function StickerToolbar({
       {/* 크기 표시 */}
       <span
         style={{
-          fontSize: 11,
+          fontSize: 13,
           color: "#aaa",
           minWidth: 32,
           textAlign: "center",

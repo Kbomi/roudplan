@@ -281,7 +281,7 @@ export default function ClockCanvas({
           x="250"
           y="510"
           textAnchor="middle"
-          fontSize="13"
+          fontSize="15"
           fill="#666"
           style={{ fontFamily: '"Gaegu", cursive' }}
         >
@@ -291,3 +291,4 @@ export default function ClockCanvas({
     </svg>
   );
 }
+

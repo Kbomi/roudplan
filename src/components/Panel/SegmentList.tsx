@@ -74,7 +74,7 @@ export default function SegmentList({ segments, onEdit, onDelete }: Props) {
           >
             {seg.label}
           </span>
-          <span style={{ fontSize: 11, color: "#aaa", flexShrink: 0 }}>
+          <span style={{ fontSize: 13, color: "#aaa", flexShrink: 0 }}>
             {formatTime(seg.startHour, seg.startMinute)}~
             {formatTime(seg.endHour, seg.endMinute)}
           </span>

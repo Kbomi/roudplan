@@ -268,30 +268,6 @@ export default function Home() {
       </main>
 
       <ActionBar tab={tab} onClear={handleClearAll} />
-
-      {/* 프린트 CSS */}
-      <style>{`
-        @media print {
-          header, .action-bar, nav { display: none !important; }
-          #clock-export-area { width: 100%; }
-          main { padding: 0 !important; }
-        }
-        @media (max-width: 768px) {
-          main {
-            padding: 16px 12px !important;
-          }
-          .work-area {
-            grid-template-columns: 1fr !important;
-            gap: 16px !important;
-          }
-          .clock-preview {
-            padding: 12px !important;
-          }
-          .main-container {
-            padding: 14px !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

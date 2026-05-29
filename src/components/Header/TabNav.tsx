@@ -14,6 +14,7 @@ const TABS: TabType[] = ["life_plan", "daily_record", "baby_feed"];
 export default function TabNav({ activeTab, onTabChange }: Props) {
   return (
     <header
+      className="header"
       style={{
         background: "white",
         borderBottom: "1px solid #f0f0f0",

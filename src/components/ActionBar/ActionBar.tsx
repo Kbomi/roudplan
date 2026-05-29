@@ -20,6 +20,7 @@ export default function ActionBar({ tab, onClear }: Props) {
 
   return (
     <div
+      className="action-bar"
       style={{
         background: "white",
         borderTop: "1px solid #f0f0f0",

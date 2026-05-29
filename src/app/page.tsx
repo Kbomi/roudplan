@@ -122,6 +122,7 @@ export default function Home() {
               />
               {/* 스티커 오버레이 - SVG와 동일 크기로 맞추기 */}
               <div
+                className="sticker-overlay"
                 style={{
                   position: "absolute",
                   inset: 12,
@@ -267,7 +268,7 @@ export default function Home() {
         </div>
       </main>
 
-      <ActionBar tab={tab} onClear={handleClearAll} />
+      <ActionBar tab={tab} onClear={handleClearAll} stickers={stickers} />
     </div>
   );
 }

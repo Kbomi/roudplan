@@ -1,21 +1,34 @@
 "use client";
-import { TabType } from "@/types";
+import { useState } from "react";
+import { TabType, Sticker } from "@/types";
 import { TAB_LABELS } from "@/constants/categories";
 import { exportAsImage, printElement } from "@/utils/exportImage";
 
 interface Props {
   tab: TabType;
   onClear: () => void;
+  stickers: Sticker[];
 }
 
-export default function ActionBar({ tab, onClear }: Props) {
+export default function ActionBar({ tab, onClear, stickers }: Props) {
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleSave = async () => {
-    const today = new Date();
-    const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
-    await exportAsImage(
-      "clock-export-area",
-      `하루시계_${TAB_LABELS[tab]}_${dateStr}.png`,
-    );
+    setIsSaving(true);
+    try {
+      const today = new Date();
+      const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
+      await exportAsImage(
+        "clock-export-area",
+        `하루시계_${TAB_LABELS[tab]}_${dateStr}.png`,
+        stickers,
+      );
+    } catch (error) {
+      console.error("저장 중 오류 발생:", error);
+      alert("이미지 저장에 실패했어요. 다시 시도해주세요.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -49,8 +62,16 @@ export default function ActionBar({ tab, onClear }: Props) {
         <button style={printBtn} onClick={printElement}>
           🖨 프린트
         </button>
-        <button style={saveBtn} onClick={handleSave}>
-          💾 이미지 저장
+        <button 
+          style={{
+            ...saveBtn,
+            opacity: isSaving ? 0.7 : 1,
+            cursor: isSaving ? "not-allowed" : "pointer",
+          }} 
+          onClick={handleSave}
+          disabled={isSaving}
+        >
+          {isSaving ? "💾 저장 중..." : "💾 이미지 저장"}
         </button>
       </div>
     </div>

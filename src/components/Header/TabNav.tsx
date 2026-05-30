@@ -47,7 +47,7 @@ export default function TabNav() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Image src="/logo.png" alt="Logo" width={60} height={60} />
+        <Image src="/logo.png" alt="Logo" width={60} height={60} unoptimized />
       </Link>
 
       {/* 탭 네비게이션 - 접근성 향상을 위해 Link 태그(a태그) 사용 */}

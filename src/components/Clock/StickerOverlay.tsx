@@ -62,6 +62,57 @@ export default function StickerOverlay({
     [stickers, selectedId, onSelect, onUpdate],
   );
 
+  // 📱 모바일 드래그 이동 터치 이벤트 처리
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent, id: string) => {
+      e.stopPropagation();
+      console.log("📱 touchstart on sticker:", id);
+      draggingRef.current = false;
+
+      const touch = e.touches[0];
+      const startX = touch.clientX;
+      const startY = touch.clientY;
+      const sticker = stickers.find((s) => s.id === id);
+      if (!sticker) return;
+      const origX = sticker.x;
+      const origY = sticker.y;
+
+      const onTouchMove = (mv: TouchEvent) => {
+        // 드래그 동작 시 모바일 브라우저의 기본 페이지 스크롤(제스처)을 방어합니다.
+        if (mv.cancelable) {
+          mv.preventDefault();
+        }
+        const currentTouch = mv.touches[0];
+        const dx = currentTouch.clientX - startX;
+        const dy = currentTouch.clientY - startY;
+
+        // 5px 이상 움직여야 드래그로 인식
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+          draggingRef.current = true;
+        }
+        if (draggingRef.current) {
+          onUpdate(id, { x: origX + dx, y: origY + dy });
+        }
+      };
+
+      const onTouchEnd = () => {
+        console.log("📱 touchend, dragging was:", draggingRef.current);
+        // 드래그하지 않고 탭만 한 경우 스티커 선택/해제 토글
+        if (!draggingRef.current) {
+          onSelect(selectedId === id ? null : id);
+        }
+        draggingRef.current = false;
+        window.removeEventListener("touchmove", onTouchMove);
+        window.removeEventListener("touchend", onTouchEnd);
+      };
+
+      // { passive: false } 로 지정해야 preventDefault()의 디바이스 스크롤 잠금이 오동작 없이 원활하게 구동됩니다.
+      window.addEventListener("touchmove", onTouchMove, { passive: false });
+      window.addEventListener("touchend", onTouchEnd);
+    },
+    [stickers, selectedId, onSelect, onUpdate],
+  );
+
   const handleResizeDown = useCallback(
     (e: React.MouseEvent, id: string) => {
       e.stopPropagation();
@@ -88,10 +139,43 @@ export default function StickerOverlay({
     [stickers, onUpdate],
   );
 
+  // 📱 모바일 크기 조절 터치 이벤트 처리
+  const handleTouchResizeStart = useCallback(
+    (e: React.TouchEvent, id: string) => {
+      e.stopPropagation();
+      const touch = e.touches[0];
+      const startX = touch.clientX;
+      const startY = touch.clientY;
+      const sticker = stickers.find((s) => s.id === id);
+      if (!sticker) return;
+      const origSize = sticker.size;
+
+      const onTouchMove = (mv: TouchEvent) => {
+        if (mv.cancelable) {
+          mv.preventDefault();
+        }
+        const currentTouch = mv.touches[0];
+        const dx = currentTouch.clientX - startX;
+        const dy = currentTouch.clientY - startY;
+        const delta = Math.sqrt(dx * dx + dy * dy) * (dx + dy > 0 ? 1 : -1);
+        const newSize = Math.max(20, Math.min(120, origSize + delta * 0.5));
+        onUpdate(id, { size: newSize });
+      };
+
+      const onTouchEnd = () => {
+        window.removeEventListener("touchmove", onTouchMove);
+        window.removeEventListener("touchend", onTouchEnd);
+      };
+
+      window.addEventListener("touchmove", onTouchMove, { passive: false });
+      window.addEventListener("touchend", onTouchEnd);
+    },
+    [stickers, onUpdate],
+  );
+
   return (
     <div
       style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
-      // onClick={() => onSelect(null)}
     >
       {stickers.map((s) => (
         <div
@@ -105,6 +189,7 @@ export default function StickerOverlay({
             cursor: "grab",
             pointerEvents: "all",
             userSelect: "none",
+            touchAction: "none", // ◀ 모바일 뷰포트에서 스티커 터치 드래그 시 브라우저 오동작 방지
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -118,6 +203,7 @@ export default function StickerOverlay({
             transition: "border 0.1s",
           }}
           onMouseDown={(e) => handleMouseDown(e, s.id)}
+          onTouchStart={(e) => handleTouchStart(e, s.id)} // ◀ 📱 모바일 드래그 시작 이벤트 연동
         >
           {s.src ? (
             <img
@@ -156,6 +242,7 @@ export default function StickerOverlay({
                 padding: 0,
               }}
               onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()} // ◀ 📱 모바일 삭제 버튼 터치 버블링 방어
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(s.id);
@@ -181,6 +268,10 @@ export default function StickerOverlay({
               onMouseDown={(e) => {
                 e.stopPropagation();
                 handleResizeDown(e, s.id);
+              }}
+              onTouchStart={(e) => { // ◀ 📱 모바일 크기 조절 터치 시작 이벤트 연동
+                e.stopPropagation();
+                handleTouchResizeStart(e, s.id);
               }}
             />
           )}

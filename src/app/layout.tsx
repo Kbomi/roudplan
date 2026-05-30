@@ -34,12 +34,27 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Gaegu&display=swap"
           rel="stylesheet"
         />
+        {/* 구글 애드센스 스크립트 */}
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9140923520326778"
           crossOrigin="anonymous"
           strategy="afterInteractive" // 페이지 인터랙션 직후 부드럽게 로드
         />
+        {/* Google Analytics (gtag.js) - 성능 최적화를 위해 afterInteractive 전략 사용 */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-1R5M7K48YB"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-1R5M7K48YB');
+          `}
+        </Script>
       </head>
       <body
         style={{

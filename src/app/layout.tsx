@@ -34,6 +34,18 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Gaegu&display=swap"
           rel="stylesheet"
         />
+      </head>
+      <body
+        style={{
+          margin: 0,
+          padding: 0,
+          minHeight: "100vh",
+          background: "#f9f8ff",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* Next.js Script 컴포넌트는 head 태그 내부가 아닌 body 내부에 선언해야 콘솔 경고 및 동작 오류가 발생하지 않습니다. */}
         {/* 구글 애드센스 스크립트 */}
         <Script
           async
@@ -55,17 +67,7 @@ export default function RootLayout({
             gtag('config', 'G-1R5M7K48YB');
           `}
         </Script>
-      </head>
-      <body
-        style={{
-          margin: 0,
-          padding: 0,
-          minHeight: "100vh",
-          background: "#f9f8ff",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+
         {/* 공통 헤더 탭 네비게이션 */}
         <TabNav />
         {/* 헤더 아래 수평형 고정 광고 배너 (CLS 방지 및 프린트 제외 처리 완료) */}

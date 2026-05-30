@@ -256,8 +256,8 @@ export default function ActionBar({ tab, onClear }: Props) {
 }
 
 const clearBtn: React.CSSProperties = {
-  padding: "10px 14px",
-  borderRadius: 10,
+  padding: "12px 16px",
+  borderRadius: 12,
   background: "#f5f5f5",
   color: "#888",
   border: "1px solid #e8e8e8",
@@ -267,8 +267,8 @@ const clearBtn: React.CSSProperties = {
   flexShrink: 0,
 };
 const printBtn: React.CSSProperties = {
-  padding: "10px 14px",
-  borderRadius: 10,
+  padding: "12px 16px",
+  borderRadius: 12,
   background: "white",
   color: "#534AB7",
   border: "1.5px solid #534AB7",
@@ -278,8 +278,8 @@ const printBtn: React.CSSProperties = {
   whiteSpace: "nowrap",
 };
 const saveBtn: React.CSSProperties = {
-  padding: "10px 16px",
-  borderRadius: 10,
+  padding: "12px 20px",
+  borderRadius: 12,
   background: "#534AB7",
   color: "white",
   border: "none",

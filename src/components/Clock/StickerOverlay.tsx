@@ -225,21 +225,23 @@ export default function StickerOverlay({
             <button
               style={{
                 position: "absolute",
-                top: -10,
-                right: -10,
-                width: 20,
-                height: 20,
+                top: -14,
+                right: -14,
+                width: 28,
+                height: 28,
                 borderRadius: "50%",
                 background: "#ff5c5c",
                 color: "white",
-                border: "none",
+                border: "2px solid white",
                 cursor: "pointer",
-                fontSize: 11,
+                fontSize: 14,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 lineHeight: 1,
                 padding: 0,
+                boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                zIndex: 10,
               }}
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()} // ◀ 📱 모바일 삭제 버튼 터치 버블링 방어
@@ -257,13 +259,16 @@ export default function StickerOverlay({
             <div
               style={{
                 position: "absolute",
-                bottom: -6,
-                right: -6,
-                width: 14,
-                height: 14,
+                bottom: -10,
+                right: -10,
+                width: 20,
+                height: 20,
                 borderRadius: "50%",
                 background: "#7F77DD",
+                border: "2px solid white",
                 cursor: "se-resize",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                zIndex: 10,
               }}
               onMouseDown={(e) => {
                 e.stopPropagation();

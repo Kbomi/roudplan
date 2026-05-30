@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import TabNav from "@/components/Header/TabNav";
+import Script from "next/script";
+import AdBanner from "@/components/AdBanner";
 
 export const metadata: Metadata = {
   title: "하루시계 — 손그림 감성 생활계획표",
@@ -32,6 +34,12 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Gaegu&display=swap"
           rel="stylesheet"
         />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9140923520326778"
+          crossOrigin="anonymous"
+          strategy="afterInteractive" // 페이지 인터랙션 직후 부드럽게 로드
+        />
       </head>
       <body
         style={{
@@ -45,6 +53,8 @@ export default function RootLayout({
       >
         {/* 공통 헤더 탭 네비게이션 */}
         <TabNav />
+        {/* 헤더 아래 수평형 고정 광고 배너 (CLS 방지 및 프린트 제외 처리 완료) */}
+        <AdBanner />
         {children}
       </body>
     </html>

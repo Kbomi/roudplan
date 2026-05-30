@@ -30,46 +30,45 @@ export default function ActionBar({ tab, onClear }: Props) {
   const handleSave = async () => {
     if (isSaving) return;
     setIsSaving(true);
-
+    
     try {
       const today = new Date();
       const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
       const fileName = `하루시계_${TAB_LABELS[tab]}_${dateStr}.png`;
-
+      
       const dataUrl = await exportAsImage("clock-export-area", fileName);
       if (!dataUrl) {
         throw new Error("이미지 데이터를 생성할 수 없습니다.");
       }
 
-      const isMobileDevice =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent,
-        );
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
 
       if (isMobileDevice) {
+        // 모바일 사파리 등에서 navigator.share 호출 시 "user gesture" 유실을 방지하기 위해 
+        // 1순위로 공유 API를 시도하고, 실패하거나 지원하지 않으면 모달 폴백을 사용합니다.
         try {
           const file = dataURLtoFile(dataUrl, fileName);
-          // 📱 1차 대응: 최신 모바일 기기가 지원할 경우 OS 기본 파일 공유 창을 실행합니다.
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
               files: [file],
               title: "나만의 하루시계 🗓",
               text: "손그림 감성 시계로 오늘 하루를 계획해 보세요!",
             });
+            // 성공적으로 공유 창이 뜨면 종료
+            setIsSaving(false);
             return;
           }
         } catch (shareError) {
-          console.warn(
-            "Native 공유가 제한되어 폴백 저장 모달로 전환합니다.",
-            shareError,
-          );
+          console.warn("Native 공유 중 오류 또는 취소:", shareError);
         }
 
-        // 📱 2차 대응 (폴백): 공유 API가 제한된 인앱 브라우저나 사파리를 위해 길게 눌러 저장 유도 모달을 노출합니다.
+        // 폴백: 저장 유도 모달 노출
         setPreviewUrl(dataUrl);
         setShowModal(true);
       } else {
-        // 💻 PC 대응: 브라우저 다이렉트 다운로드 실행
+        // PC 대응: 다운로드
         const link = document.createElement("a");
         link.href = dataUrl;
         link.download = fileName;
@@ -77,9 +76,9 @@ export default function ActionBar({ tab, onClear }: Props) {
         link.click();
         document.body.removeChild(link);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("저장 중 오류 발생:", error);
-      alert("이미지 저장에 실패했어요. 다시 시도해 주세요.");
+      alert(`이미지 저장에 실패했어요: ${error.message || "다시 시도해 주세요."}`);
     } finally {
       setIsSaving(false);
     }
@@ -112,22 +111,17 @@ export default function ActionBar({ tab, onClear }: Props) {
           ↺ 초기화
         </button>
         <div
-          style={{
-            display: "flex",
-            gap: 8,
-            flex: 1,
-            justifyContent: "flex-end",
-          }}
+          style={{ display: "flex", gap: 8, flex: 1, justifyContent: "flex-end" }}
         >
           <button className="print-btn" style={printBtn} onClick={printElement}>
             🖨 프린트
           </button>
-          <button
+          <button 
             style={{
               ...saveBtn,
               opacity: isSaving ? 0.7 : 1,
               cursor: isSaving ? "not-allowed" : "pointer",
-            }}
+            }} 
             onClick={handleSave}
             disabled={isSaving}
           >
@@ -138,7 +132,6 @@ export default function ActionBar({ tab, onClear }: Props) {
         {/* 📱 모바일 전용 반응형 스타일 선언 */}
         <style>{`
           @media (max-width: 768px) {
-            /* 모바일 웹뷰에서는 작동성이 무의미한 프린트 버튼을 숨깁니다. */
             .print-btn {
               display: none !important;
             }
@@ -191,7 +184,7 @@ export default function ActionBar({ tab, onClear }: Props) {
             >
               🎉 나만의 하루시계 완성!
             </div>
-
+            
             <div
               style={{
                 fontSize: 14,
@@ -200,12 +193,10 @@ export default function ActionBar({ tab, onClear }: Props) {
                 lineHeight: 1.5,
               }}
             >
-              아래 이미지를 **길게 꾹 누르시면**
-              <br />
+              아래 이미지를 **길게 꾹 누르시면**<br />
               사진첩에 안전하게 저장하실 수 있어요! 📸
             </div>
 
-            {/* 유저가 길게 눌러 다운로드할 수 있는 고해상도 변환 이미지 슬롯 */}
             <div
               style={{
                 width: "100%",
@@ -226,7 +217,7 @@ export default function ActionBar({ tab, onClear }: Props) {
                   height: "auto",
                   maxHeight: "260px",
                   objectFit: "contain",
-                  userSelect: "auto", // 모바일 기본 프레스 제스처 허용
+                  userSelect: "auto",
                   WebkitUserSelect: "auto",
                 }}
               />
@@ -240,6 +231,7 @@ export default function ActionBar({ tab, onClear }: Props) {
                 background: "#534AB7",
                 color: "white",
                 border: "none",
+                fontFamily: '"Gaegu", cursive',
                 fontSize: 18,
                 cursor: "pointer",
                 boxShadow: "0 2px 6px rgba(83, 74, 183, 0.2)",

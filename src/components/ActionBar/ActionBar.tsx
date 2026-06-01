@@ -68,11 +68,11 @@ export default function ActionBar({ tab, onClear }: Props) {
       }
 
       if (isMobile) {
-        // iOS 등 모바일 대응: DataURL(Base64)이 <img> 태그 프리뷰에 더 안정적임
-        const dataUrl = await exportAsImage("clock-export-area", fileName);
-        if (!dataUrl) throw new Error("이미지 생성 실패");
+        // iOS 등 모바일 대응: Blob URL을 사용하여 메모리 효율성과 안정성 확보
+        const blob = await exportAsBlob("clock-export-area");
+        if (!blob) throw new Error("이미지 생성 실패");
 
-        const blob = await (await fetch(dataUrl)).blob();
+        const blobUrl = URL.createObjectURL(blob);
         const file = new File([blob], fileName, { type: "image/png" });
 
         // (A) 네이티브 공유 API 시도
@@ -84,6 +84,7 @@ export default function ActionBar({ tab, onClear }: Props) {
               text: "손그림 감성 시계로 오늘 하루를 계획해 보세요!",
             });
             setIsSaving(false);
+            URL.revokeObjectURL(blobUrl); // 공유 성공 시 즉시 해제
             return;
           }
         } catch (shareError) {
@@ -93,7 +94,7 @@ export default function ActionBar({ tab, onClear }: Props) {
         // (B) 직접 다운로드 시도 (팝업 유도)
         try {
           const link = document.createElement("a");
-          link.href = dataUrl;
+          link.href = blobUrl;
           link.download = fileName;
           document.body.appendChild(link);
           link.click();
@@ -102,8 +103,8 @@ export default function ActionBar({ tab, onClear }: Props) {
           console.error("모바일 직접 다운로드 시도 실패:", downloadError);
         }
 
-        // (C) 폴백: 저장 유도 모달 노출 (iOS는 DataURL 사용)
-        setPreviewUrl(dataUrl);
+        // (C) 폴백: 저장 유도 모달 노출 (Blob URL 사용)
+        setPreviewUrl(blobUrl);
         setShowModal(true);
       } else {
         // PC 대응: 바로 다운로드
@@ -221,12 +222,13 @@ export default function ActionBar({ tab, onClear }: Props) {
               gap: 16,
               boxSizing: "border-box",
               transition: "background-color 0.3s ease",
+              touchAction: "manipulation",
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div
               style={{
-                fontFamily: '"Gaegu", cursive',
+                // fontFamily: '"Gaegu", cursive',
                 fontSize: 24,
                 fontWeight: 700,
                 color: "var(--tab-active)",
@@ -236,16 +238,17 @@ export default function ActionBar({ tab, onClear }: Props) {
             >
               {/Android/i.test(navigator.userAgent)
                 ? "📸 갤러리에 저장되었어요!"
-                : "🎉 나만의 하루시계 완성!"}
+                : tab === "baby_feed"
+                  ? "🎉 우리 아기냠냠표 완성!"
+                  : `🎉 나만의 ${TAB_LABELS[tab]} 완성!`}
             </div>
-
             <div
               style={{
                 fontSize: 15,
                 color: "var(--foreground)",
                 textAlign: "center",
                 lineHeight: 1.5,
-                fontFamily: '"Gaegu", cursive',
+                // fontFamily: '"Gaegu", cursive',
                 opacity: 0.9,
               }}
             >
@@ -270,7 +273,7 @@ export default function ActionBar({ tab, onClear }: Props) {
                 background: "white",
                 border: "1.5px dashed var(--tab-active)",
                 borderRadius: 12,
-                overflow: "hidden",
+                // overflow: "hidden", // iOS Safari에서 꾹 누를 때 미리보기가 깨지는 현상 방지를 위해 해제
                 boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                 display: "flex",
                 justifyContent: "center",
@@ -280,12 +283,15 @@ export default function ActionBar({ tab, onClear }: Props) {
                 src={previewUrl}
                 alt="하루시계 결과물"
                 style={{
-                  width: "100%",
+                  display: "block",
+                  // width: "100%",
                   height: "auto",
-                  maxHeight: "260px",
-                  objectFit: "contain",
-                  userSelect: "auto",
+                  maxHeight: "300px",
+                  borderRadius: 12,
+                  WebkitTouchCallout: "default",
                   WebkitUserSelect: "auto",
+                  userSelect: "auto",
+                  pointerEvents: "auto",
                 }}
               />
             </div>
@@ -298,7 +304,7 @@ export default function ActionBar({ tab, onClear }: Props) {
                 background: "var(--tab-active)",
                 color: "white",
                 border: "none",
-                fontFamily: '"Gaegu", cursive',
+                // fontFamily: '"Gaegu", cursive',
                 fontSize: 18,
                 cursor: "pointer",
                 boxShadow: "0 2px 6px rgba(83, 74, 183, 0.2)",

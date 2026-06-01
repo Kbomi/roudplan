@@ -106,7 +106,6 @@ export default function ActionBar({ tab, onClear }: Props) {
         setPreviewUrl(dataUrl);
         setShowModal(true);
       } else {
-
         // PC 대응: 바로 다운로드
         const dataUrl = await exportAsImage("clock-export-area", fileName);
         if (!dataUrl) throw new Error("이미지 생성 실패");
@@ -260,9 +259,12 @@ export default function ActionBar({ tab, onClear }: Props) {
                 </>
               ) : (
                 <>
-                  아래 이미지를 <b>길게 꾹 누르시면</b>
+                  📱 <b>Safari</b>: 이미지를 길게 꾹 누르면 저장돼요
                   <br />
-                  사진첩에 안전하게 저장하실 수 있어요! 📸
+                  🌐 <b>Chrome</b>: 하단의 <b>저장...</b> 버튼을 눌러주세요
+                  {/* 아래 이미지를 <b>길게 꾹 누르시면</b> */}
+                  {/* <br />
+                  사진첩에 안전하게 저장하실 수 있어요! 📸 */}
                 </>
               )}
             </div>

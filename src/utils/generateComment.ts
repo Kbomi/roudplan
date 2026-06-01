@@ -11,7 +11,13 @@ export function generateComment(tab: TabType, segments: Segment[]): string {
     ).length;
     const sleepMins = segments
       // .filter(s => s.emoji === '😴' || s.label.includes('낮잠') || s.label.includes('수면'))
-      .filter((s) => s.label.includes("낮잠") || s.label.includes("수면"))
+      .filter(
+        (s) =>
+          s.label.includes("낮잠") ||
+          s.label.includes("수면") ||
+          s.label.includes("밤잠") ||
+          s.label.includes("잠"),
+      )
       .reduce(
         (sum, s) =>
           sum +
@@ -19,7 +25,7 @@ export function generateComment(tab: TabType, segments: Segment[]): string {
         0,
       );
     const sleepH = Math.round((sleepMins / 60) * 10) / 10;
-    return `오늘 수유 ${feedCount}회 · 수면 ${sleepH}시간 🍼`;
+    return `수유 ${feedCount}회 · 수면 ${sleepH}시간 🍼`;
   }
 
   // daily_record

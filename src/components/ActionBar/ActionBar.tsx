@@ -68,11 +68,11 @@ export default function ActionBar({ tab, onClear }: Props) {
       }
 
       if (isMobile) {
-        // iOS 등 모바일 대응: Blob URL을 사용하여 메모리 효율성과 안정성 확보
-        const blob = await exportAsBlob("clock-export-area");
-        if (!blob) throw new Error("이미지 생성 실패");
+        // iOS 등 모바일 대응: 안정적인 팝업 노출을 위해 DataURL 사용
+        const dataUrl = await exportAsImage("clock-export-area", fileName);
+        if (!dataUrl) throw new Error("이미지 생성 실패");
 
-        const blobUrl = URL.createObjectURL(blob);
+        const blob = await (await fetch(dataUrl)).blob();
         const file = new File([blob], fileName, { type: "image/png" });
 
         // (A) 네이티브 공유 API 시도
@@ -84,7 +84,6 @@ export default function ActionBar({ tab, onClear }: Props) {
               text: "손그림 감성 시계로 오늘 하루를 계획해 보세요!",
             });
             setIsSaving(false);
-            URL.revokeObjectURL(blobUrl); // 공유 성공 시 즉시 해제
             return;
           }
         } catch (shareError) {
@@ -94,7 +93,7 @@ export default function ActionBar({ tab, onClear }: Props) {
         // (B) 직접 다운로드 시도 (팝업 유도)
         try {
           const link = document.createElement("a");
-          link.href = blobUrl;
+          link.href = dataUrl;
           link.download = fileName;
           document.body.appendChild(link);
           link.click();
@@ -103,10 +102,11 @@ export default function ActionBar({ tab, onClear }: Props) {
           console.error("모바일 직접 다운로드 시도 실패:", downloadError);
         }
 
-        // (C) 폴백: 저장 유도 모달 노출 (Blob URL 사용)
-        setPreviewUrl(blobUrl);
+        // (C) 폴백: 저장 유도 모달 노출 (Data URL 사용)
+        setPreviewUrl(dataUrl);
         setShowModal(true);
       } else {
+
         // PC 대응: 바로 다운로드
         const dataUrl = await exportAsImage("clock-export-area", fileName);
         if (!dataUrl) throw new Error("이미지 생성 실패");

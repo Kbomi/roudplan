@@ -38,7 +38,8 @@ async function capture(elementId: string, type: 'png' | 'blob'): Promise<string 
     // iOS Safari 안정성을 위해 충분한 대기 시간 확보
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    // iOS 기기(Safari, Chrome 등 모든 브라우저) 여부 확인
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     
     const options: any = {
       scale: 2,
@@ -54,12 +55,12 @@ async function capture(elementId: string, type: 'png' | 'blob'): Promise<string 
       features: {
         fixSvgXmlDecode: true,
       },
-      // Safari에서 이미지 디코딩 오류 방지를 위한 간격 설정
-      drawImageInterval: isSafari ? 500 : 100,
+      // iOS 환경에서 이미지 디코딩 오류 방지를 위한 간격 설정
+      drawImageInterval: isIOS ? 500 : 100,
     };
 
-    if (isSafari) {
-      // Safari는 Canvas를 먼저 생성하고 거기서 데이터를 뽑는 것이 더 안정적임
+    if (isIOS) {
+      // iOS(WebKit 계열)는 Canvas를 먼저 생성하고 거기서 데이터를 뽑는 것이 훨씬 안정적임
       const canvas = await domToCanvas(element, options);
       if (type === 'png') {
         return canvas.toDataURL('image/png');

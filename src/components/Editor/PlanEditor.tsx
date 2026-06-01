@@ -48,10 +48,10 @@ export default function PlanEditor({ tab }: Props) {
     <main
       style={{
         flex: 1,
-        padding: "28px 32px",
+        padding: "16px 12px",
         display: "flex",
         flexDirection: "column",
-        gap: 20,
+        gap: 16,
         maxWidth: 1400,
         margin: "0 auto",
       }}
@@ -61,29 +61,33 @@ export default function PlanEditor({ tab }: Props) {
         className="work-area"
         style={{
           display: "grid",
-          gridTemplateColumns: "minmax(0, 1fr) clamp(300px, 35%, 420px)",
+          gridTemplateColumns: "1fr",
           gap: 20,
           alignItems: "start",
           maxWidth: 1200,
           margin: "0 auto",
+          width: "100%",
         }}
       >
         {/* 좌측: 시계 */}
         <div
           className="clock-preview"
           style={{
-            background: "white",
+            background: "var(--card-bg)",
             borderRadius: 16,
-            padding: 24,
+            padding: "16px 8px",
             boxShadow: "0 2px 16px rgba(0,0,0,0.06)",
             display: "flex",
             flexDirection: "column",
             gap: 12,
+            width: "100%",
+            boxSizing: "border-box",
+            transition: "background-color 0.3s ease",
           }}
         >
           <div
             className="no-print"
-            style={{ fontSize: 13, color: "#bbb", textAlign: "center" }}
+            style={{ fontSize: 13, color: "var(--tab-inactive)", textAlign: "center" }}
           >
             결과물 미리보기
           </div>
@@ -95,6 +99,7 @@ export default function PlanEditor({ tab }: Props) {
               position: "relative",
               background: "white",
               borderRadius: 12,
+              width: "100%",
             }}
           >
             <ClockCanvas
@@ -108,7 +113,7 @@ export default function PlanEditor({ tab }: Props) {
               className="sticker-overlay"
               style={{
                 position: "absolute",
-                inset: 12,
+                inset: 8,
                 pointerEvents: stickers.length > 0 ? "auto" : "none",
               }}
               onClick={(e) => {
@@ -169,19 +174,20 @@ export default function PlanEditor({ tab }: Props) {
                 fontFamily: '"Gaegu", cursive',
                 fontSize: 22,
                 border: "none",
-                borderBottom: "2px solid #ddd",
+                borderBottom: "2px solid var(--border-color)",
                 background: "transparent",
                 outline: "none",
                 width: 160,
                 paddingBottom: 2,
-                color: "#444",
+                color: "var(--foreground)",
+                transition: "color 0.3s ease, border-color 0.3s ease",
               }}
             />
             <span
               style={{
                 fontFamily: '"Gaegu", cursive',
                 fontSize: 22,
-                color: "#666",
+                color: "var(--tab-inactive)",
               }}
             >
               {TAB_TITLE_SUFFIX[tab]}
@@ -190,10 +196,11 @@ export default function PlanEditor({ tab }: Props) {
 
           <div
             style={{
-              background: "white",
+              background: "var(--card-bg)",
               borderRadius: 16,
               padding: 20,
               boxShadow: "0 2px 16px rgba(0,0,0,0.06)",
+              transition: "background-color 0.3s ease",
             }}
           >
             <SegmentForm
@@ -207,22 +214,23 @@ export default function PlanEditor({ tab }: Props) {
 
           <div
             style={{
-              background: "white",
+              background: "var(--card-bg)",
               borderRadius: 16,
               padding: 20,
               boxShadow: "0 2px 16px rgba(0,0,0,0.06)",
+              transition: "background-color 0.3s ease",
             }}
           >
             <div
               style={{
                 fontWeight: 600,
                 fontSize: 16,
-                color: "#444",
+                color: "var(--foreground)",
                 marginBottom: 12,
               }}
             >
               추가된 구간{" "}
-              <span style={{ color: "#aaa", fontWeight: 400, fontSize: 14 }}>
+              <span style={{ color: "var(--tab-inactive)", fontWeight: 400, fontSize: 14 }}>
                 ({segments.length}개)
               </span>
             </div>
@@ -237,11 +245,11 @@ export default function PlanEditor({ tab }: Props) {
           {comment && (
             <div
               style={{
-                background: "#EEEDFE",
+                background: "rgba(154, 143, 255, 0.15)",
                 borderRadius: 12,
                 padding: "12px 16px",
                 fontSize: 14,
-                color: "#534AB7",
+                color: "var(--tab-active)",
                 fontFamily: '"Gaegu", cursive',
                 textAlign: "center",
               }}
@@ -252,6 +260,21 @@ export default function PlanEditor({ tab }: Props) {
         </div>
       </div>
       <ActionBar tab={tab} onClear={handleClearAll} />
+
+      {/* 💻 PC 레이아웃 대응을 위한 반응형 스타일 */}
+      <style>{`
+        @media (min-width: 768px) {
+          .work-area {
+            grid-template-columns: minmax(0, 1fr) clamp(300px, 35%, 420px) !important;
+          }
+          main {
+            padding: 28px 32px !important;
+          }
+          .clock-preview {
+            padding: 24px !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }

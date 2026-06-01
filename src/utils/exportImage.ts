@@ -1,13 +1,27 @@
-import { domToPng } from 'modern-screenshot';
+import { domToPng, domToBlob, domToCanvas } from 'modern-screenshot';
 
 /**
- * 특정 DOM 요소를 이미지로 캡처하여 데이터 URL을 반환합니다.
- * iOS Safari 호환성을 위해 modern-screenshot 엔진을 사용합니다.
+ * 특정 DOM 요소를 이미지로 캡처하여 데이터 URL(PNG)을 반환합니다.
  */
 export async function exportAsImage(
   elementId: string,
   fileName: string,
 ): Promise<string | void> {
+  const result = await capture(elementId, 'png');
+  return result as string;
+}
+
+/**
+ * 특정 DOM 요소를 Blob으로 캡처합니다.
+ */
+export async function exportAsBlob(
+  elementId: string,
+): Promise<Blob | void> {
+  const result = await capture(elementId, 'blob');
+  return result as Blob;
+}
+
+async function capture(elementId: string, type: 'png' | 'blob'): Promise<string | Blob | void> {
   if (typeof window === 'undefined') return;
 
   const element = document.getElementById(elementId);
@@ -17,21 +31,18 @@ export async function exportAsImage(
   }
 
   try {
-    // 1. 폰트 로드 대기 (브라우저 API 사용)
     if (document.fonts && document.fonts.ready) {
       await document.fonts.ready;
     }
 
-    // 2. 렌더링 안정을 위한 지연
-    // iOS Safari에서 폰트나 이미지가 유실되는 것을 방지하기 위해 약간의 여유를 둡니다.
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    // iOS Safari 안정성을 위해 충분한 대기 시간 확보
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // 3. 이미지 생성 (modern-screenshot)
-    // 이 라이브러리는 Safari의 foreignObject 버그를 더 잘 우회합니다.
-    const dataUrl = await domToPng(element, {
-      scale: 2, // 결과물 품질 (pixelRatio와 유사)
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    
+    const options: any = {
+      scale: 2,
       backgroundColor: '#ffffff',
-      // filter: 출력에서 제외할 요소 처리
       filter: (node: Node) => {
         if (node instanceof HTMLElement && node.classList) {
           if (node.classList.contains('no-print') || node.tagName === 'INS') {
@@ -40,24 +51,33 @@ export async function exportAsImage(
         }
         return true;
       },
-      // iOS Safari의 안정성을 위한 추가 옵션 (기본값들이지만 명시적으로 확인)
       features: {
-        fixSvgXmlDecode: true, // Safari 이미지 디코딩 버그 수정
+        fixSvgXmlDecode: true,
       },
-    });
-    
-    if (!dataUrl || dataUrl.length < 100) {
-      throw new Error("이미지 생성 결과가 유효하지 않습니다.");
+      // Safari에서 이미지 디코딩 오류 방지를 위한 간격 설정
+      drawImageInterval: isSafari ? 500 : 100,
+    };
+
+    if (isSafari) {
+      // Safari는 Canvas를 먼저 생성하고 거기서 데이터를 뽑는 것이 더 안정적임
+      const canvas = await domToCanvas(element, options);
+      if (type === 'png') {
+        return canvas.toDataURL('image/png');
+      } else {
+        return new Promise((resolve) => {
+          canvas.toBlob((blob) => resolve(blob || undefined), 'image/png');
+        });
+      }
     }
 
-    return dataUrl;
+    if (type === 'png') {
+      return await domToPng(element, options);
+    } else {
+      return await domToBlob(element, options);
+    }
 
   } catch (e) {
     console.error('이미지 생성 중 오류 발생:', e);
-    // iOS Safari에서 간혹 발생하는 에러 핸들링
-    if (e instanceof Error && e.message.includes('Canvas')) {
-      throw new Error("이미지 크기가 너무 커서 저장할 수 없습니다. 잠시 후 다시 시도해 주세요.");
-    }
     throw e;
   }
 }

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import TabNav from "@/components/Header/TabNav";
 import Script from "next/script";
@@ -14,6 +14,14 @@ export const metadata: Metadata = {
       "손그림 감성 시계로 하루를 계획해요. 생활계획표, 하루기록표, 아기냠냠표를 무료로 만들고 바로 저장!",
     type: "website",
   },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f9f8ff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1b1e" },
+  ],
 };
 
 export default function RootLayout({
@@ -40,7 +48,6 @@ export default function RootLayout({
           margin: 0,
           padding: 0,
           minHeight: "100vh",
-          background: "#f9f8ff",
           display: "flex",
           flexDirection: "column",
         }}

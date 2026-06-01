@@ -28,8 +28,8 @@ export default function TabNav() {
     <header
       className="header no-print"
       style={{
-        background: "white",
-        borderBottom: "1px solid #f0f0f0",
+        background: "var(--card-bg)",
+        borderBottom: "1px solid var(--border-color)",
         padding: "0 32px",
         display: "flex",
         alignItems: "center",
@@ -39,6 +39,7 @@ export default function TabNav() {
         position: "sticky",
         top: 0,
         zIndex: 100,
+        transition: "background-color 0.3s ease, border-color 0.3s ease",
       }}
     >
       {/* 로고 */}
@@ -68,10 +69,10 @@ export default function TabNav() {
                 padding: "7px 18px",
                 borderRadius: 24,
                 border: isActive
-                  ? "1.5px solid #7F77DD"
+                  ? "1.5px solid var(--tab-active)"
                   : "1.5px solid transparent",
-                background: isActive ? "#EEEDFE" : "transparent",
-                color: isActive ? "#534AB7" : "#999",
+                background: isActive ? "rgba(154, 143, 255, 0.15)" : "transparent",
+                color: isActive ? "var(--tab-active)" : "var(--tab-inactive)",
                 fontFamily: '"Gaegu", cursive',
                 fontSize: 17,
                 cursor: "pointer",

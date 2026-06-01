@@ -3,9 +3,9 @@ import { Segment } from "@/types";
 import { describeArc, midAngle, polarToCartesian } from "@/utils/clockMath";
 
 const CX = 250,
-  CY = 250,
-  R = 175,
-  R_INNER = 50;
+  CY = 280,
+  R = 210,
+  R_INNER = 55;
 const HOUR_MARKS = Array.from({ length: 24 }, (_, i) => i);
 
 interface Props {
@@ -23,11 +23,12 @@ export default function ClockCanvas({
 }: Props) {
   return (
     <svg
-      viewBox="0 0 500 540"
+      viewBox="0 0 500 600"
       xmlns="http://www.w3.org/2000/svg"
       style={{ width: "100%", height: "auto", fontFamily: '"Gaegu", cursive' }}
     >
       {/* 손그림 필터 */}
+
       <defs>
         <filter id="sketchy">
           <feTurbulence
@@ -66,11 +67,11 @@ export default function ClockCanvas({
       {/* 제목 */}
       <text
         x="250"
-        y="28"
+        y="22"
         textAnchor="middle"
-        fontSize="18"
+        fontSize="20"
         fill="#444"
-        style={{ fontFamily: '"Gaegu", cursive' }}
+        style={{ fontFamily: '"Gaegu", cursive', fontWeight: 700 }}
       >
         {userName || "___"}
         {titleSuffix}
@@ -79,7 +80,7 @@ export default function ClockCanvas({
       {/* 바깥 테두리 원 */}
       <circle
         cx={CX}
-        cy={CY + 20}
+        cy={CY}
         r={R + 14}
         fill="none"
         stroke="#ddd"
@@ -90,9 +91,9 @@ export default function ClockCanvas({
       {/* 시간 눈금 & 숫자 */}
       {HOUR_MARKS.map((h) => {
         const angle = (h / 24) * 360 - 90;
-        const outer = polarToCartesian(CX, CY + 20, R + 10, angle);
-        const inner = polarToCartesian(CX, CY + 20, R + 4, angle);
-        const label = polarToCartesian(CX, CY + 20, R + 24, angle);
+        const outer = polarToCartesian(CX, CY, R + 10, angle);
+        const inner = polarToCartesian(CX, CY, R + 4, angle);
+        const label = polarToCartesian(CX, CY, R + 26, angle);
         return (
           <g key={h}>
             <line
@@ -108,7 +109,7 @@ export default function ClockCanvas({
                 x={label.x}
                 y={label.y + 4}
                 textAnchor="middle"
-                fontSize="11"
+                fontSize="12"
                 fill="#999"
                 style={{ fontFamily: '"Gaegu", cursive' }}
               >
@@ -123,7 +124,7 @@ export default function ClockCanvas({
       {segments.map((seg) => {
         const path = describeArc(
           CX,
-          CY + 20,
+          CY,
           R,
           seg.startHour,
           seg.startMinute,
@@ -159,12 +160,12 @@ export default function ClockCanvas({
         // 폰트 크기 (전체적으로 키움)
         const fontSize =
           spanAngle >= 30
-            ? 12
+            ? 14
             : spanAngle >= 20
-              ? 11
+              ? 13
               : spanAngle >= 12
-                ? 10
-                : 9;
+                ? 12
+                : 11;
 
         // 텍스트를 공백 기준으로 먼저 나누고, 한 줄이 너무 길면 글자 수로 추가 분리
         const wrapText = (text: string, maxChars: number): string[] => {
@@ -208,8 +209,8 @@ export default function ClockCanvas({
         // const emojiH = showEmoji && hasEmoji ? 18 : 0;
         // const totalH = emojiH + totalLines * lineHeight;
         const totalH = totalLines * lineHeight;
-        const labelR = R * 0.65;
-        const labelPos = polarToCartesian(CX, CY + 20, labelR, mid);
+        const labelR = R * 0.72;
+        const labelPos = polarToCartesian(CX, CY, labelR, mid);
         const startY = labelPos.y - totalH / 2;
 
         return (
@@ -239,7 +240,7 @@ export default function ClockCanvas({
             {/* 줄바꿈 텍스트 */}
             <text
               textAnchor="middle"
-              fontSize={fontSize}
+              fontSize={fontSize + 3}
               fill="#444"
               style={{ fontFamily: '"Gaegu", cursive', userSelect: "none" }}
             >
@@ -261,7 +262,7 @@ export default function ClockCanvas({
       {/* 중앙 흰 원 */}
       <circle
         cx={CX}
-        cy={CY + 20}
+        cy={CY}
         r={R_INNER}
         fill="white"
         stroke="#eee"
@@ -269,19 +270,19 @@ export default function ClockCanvas({
       />
       <image
         href="/clock-image.png"
-        x={CX - 36}
-        y={CY + 20 - 36}
-        width="70"
-        height="70"
+        x={CX - 38}
+        y={CY - 38}
+        width="76"
+        height="76"
       />
 
       {/* 총평 (하루기록표/아기냠냠표) */}
       {comment && (
         <text
           x="250"
-          y="510"
+          y="575"
           textAnchor="middle"
-          fontSize="15"
+          fontSize="16"
           fill="#666"
           style={{ fontFamily: '"Gaegu", cursive' }}
         >
@@ -291,4 +292,3 @@ export default function ClockCanvas({
     </svg>
   );
 }
-

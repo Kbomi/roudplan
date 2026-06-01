@@ -89,9 +89,10 @@ export default function SegmentForm({
         style={{
           fontWeight: 600,
           fontSize: 14,
-          color: "#444",
-          borderBottom: "1px solid #f0f0f0",
+          color: "var(--foreground)",
+          borderBottom: "1px solid var(--border-color)",
           paddingBottom: 8,
+          transition: "color 0.3s ease, border-color 0.3s ease",
         }}
       >
         {editTarget ? "✏️ 구간 수정" : "➕ 구간 추가"}
@@ -107,12 +108,14 @@ export default function SegmentForm({
                 ...chip,
                 background:
                   // form.emoji === cat.emoji &&
-                  form.label === cat.label ? cat.defaultColor : "#f7f7f7",
+                  form.label === cat.label ? cat.defaultColor : "var(--input-bg)",
+                color: form.label === cat.label ? "#333" : "var(--foreground)",
                 border:
                   // form.emoji === cat.emoji &&
                   form.label === cat.label
-                    ? "1.5px solid #7F77DD"
-                    : "1px solid #e8e8e8",
+                    ? "1.5px solid var(--tab-active)"
+                    : "1px solid var(--border-color)",
+                transition: "all 0.2s ease",
               }}
               onClick={() =>
                 setForm((f) => ({
@@ -168,7 +171,7 @@ export default function SegmentForm({
       <div>
         <div style={lbl}>
           활동 이름{" "}
-          <span style={{ color: "#bbb", fontWeight: 400 }}>(최대 10자)</span>
+          <span style={{ color: "var(--tab-inactive)", fontWeight: 400 }}>(최대 10자)</span>
         </div>
         <input
           style={inp}
@@ -177,7 +180,7 @@ export default function SegmentForm({
           value={form.label}
           onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
         />
-        <div style={{ fontSize: 11, color: "#bbb", marginTop: 3 }}>
+        <div style={{ fontSize: 11, color: "var(--tab-inactive)", marginTop: 3 }}>
           짧을수록 시계에 예쁘게 표시돼요 🕐
         </div>
       </div>
@@ -289,10 +292,11 @@ export default function SegmentForm({
         <div
           style={{
             fontSize: 12,
-            color: "#e24b4a",
-            background: "#fff0f0",
+            color: "#ff6b6b",
+            background: "rgba(255, 107, 107, 0.1)",
             borderRadius: 6,
             padding: "6px 10px",
+            border: "1px solid rgba(255, 107, 107, 0.2)",
           }}
         >
           {error}
@@ -315,9 +319,10 @@ export default function SegmentForm({
 
 const lbl: React.CSSProperties = {
   fontSize: 13,
-  color: "#888",
+  color: "var(--tab-inactive)",
   marginBottom: 4,
   fontWeight: 500,
+  transition: "color 0.3s ease",
 };
 const chip: React.CSSProperties = {
   fontSize: 14,
@@ -329,26 +334,30 @@ const sel: React.CSSProperties = {
   width: "100%",
   padding: "7px 8px",
   borderRadius: 8,
-  border: "1px solid #e8e8e8",
+  border: "1px solid var(--border-color)",
   fontSize: 15,
-  background: "#fafafa",
+  background: "var(--input-bg)",
+  color: "var(--foreground)",
   outline: "none",
+  transition: "all 0.3s ease",
 };
 const inp: React.CSSProperties = {
   width: "100%",
   padding: "7px 10px",
   borderRadius: 8,
-  border: "1px solid #e8e8e8",
+  border: "1px solid var(--border-color)",
   fontSize: 15,
-  background: "#fafafa",
+  background: "var(--input-bg)",
+  color: "var(--foreground)",
   outline: "none",
   boxSizing: "border-box",
+  transition: "all 0.3s ease",
 };
 const addBtn: React.CSSProperties = {
   flex: 1,
   padding: "9px",
   borderRadius: 10,
-  background: "#534AB7",
+  background: "var(--tab-active)",
   color: "white",
   border: "none",
   cursor: "pointer",
@@ -358,9 +367,9 @@ const addBtn: React.CSSProperties = {
 const cancelBtn: React.CSSProperties = {
   padding: "9px 14px",
   borderRadius: 10,
-  background: "#f0f0f0",
-  color: "#666",
-  border: "none",
+  background: "var(--input-bg)",
+  color: "var(--tab-inactive)",
+  border: "1px solid var(--border-color)",
   cursor: "pointer",
   fontSize: 15,
 };

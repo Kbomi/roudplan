@@ -15,7 +15,7 @@ export default function SegmentList({ segments, onEdit, onDelete }: Props) {
         style={{
           textAlign: "center",
           padding: "20px 0",
-          color: "#ccc",
+          color: "var(--tab-inactive)",
           fontSize: 13,
         }}
       >
@@ -45,9 +45,10 @@ export default function SegmentList({ segments, onEdit, onDelete }: Props) {
             alignItems: "center",
             gap: 8,
             padding: "8px 10px",
-            background: "#fafafa",
+            background: "var(--input-bg)",
             borderRadius: 8,
-            border: "1px solid #f0f0f0",
+            border: "1px solid var(--border-color)",
+            transition: "all 0.2s ease",
           }}
         >
           <div
@@ -57,7 +58,7 @@ export default function SegmentList({ segments, onEdit, onDelete }: Props) {
               borderRadius: "50%",
               background: seg.color,
               flexShrink: 0,
-              border: "1px solid #e0e0e0",
+              border: "1px solid var(--border-color)",
             }}
           />
           {/* <span style={{ fontSize: 16, flexShrink: 0 }}>{seg.emoji}</span> */}
@@ -66,7 +67,7 @@ export default function SegmentList({ segments, onEdit, onDelete }: Props) {
               fontSize: 13,
               flex: 1,
               fontWeight: 500,
-              color: "#444",
+              color: "var(--foreground)",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -74,7 +75,7 @@ export default function SegmentList({ segments, onEdit, onDelete }: Props) {
           >
             {seg.label}
           </span>
-          <span style={{ fontSize: 13, color: "#aaa", flexShrink: 0 }}>
+          <span style={{ fontSize: 13, color: "var(--tab-inactive)", flexShrink: 0 }}>
             {formatTime(seg.startHour, seg.startMinute)}~
             {formatTime(seg.endHour, seg.endMinute)}
           </span>

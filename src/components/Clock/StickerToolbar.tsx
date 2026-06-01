@@ -24,11 +24,12 @@ export default function StickerToolbar({
         justifyContent: "center",
         gap: 8,
         padding: "8px 14px",
-        background: "white",
+        background: "var(--card-bg)",
         borderRadius: 40,
-        boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-        border: "1px solid #f0f0f0",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.2)",
+        border: "1px solid var(--border-color)",
         userSelect: "none",
+        transition: "background-color 0.3s ease, border-color 0.3s ease",
       }}
       onClick={(e) => {
         console.log("🟢 toolbar onClick stopPropagation");
@@ -45,7 +46,7 @@ export default function StickerToolbar({
         )}
       </div>
 
-      <div style={{ width: 1, height: 20, background: "#eee" }} />
+      <div style={{ width: 1, height: 20, background: "var(--border-color)" }} />
 
       {/* 작게 */}
       <button style={toolBtn} title="작게" onClick={() => onSizeChange(-8)}>
@@ -56,7 +57,7 @@ export default function StickerToolbar({
       <span
         style={{
           fontSize: 13,
-          color: "#aaa",
+          color: "var(--tab-inactive)",
           minWidth: 32,
           textAlign: "center",
         }}
@@ -69,7 +70,7 @@ export default function StickerToolbar({
         <span style={{ fontSize: 16 }}>➕</span>
       </button>
 
-      <div style={{ width: 1, height: 20, background: "#eee" }} />
+      <div style={{ width: 1, height: 20, background: "var(--border-color)" }} />
 
       {/* 삭제 */}
       <button
@@ -80,13 +81,13 @@ export default function StickerToolbar({
         <span style={{ fontSize: 16 }}>🗑️</span>
       </button>
 
-      <div style={{ width: 1, height: 20, background: "#eee" }} />
+      <div style={{ width: 1, height: 20, background: "var(--border-color)" }} />
 
       {/* 완료 */}
       <button
         style={{
           ...toolBtn,
-          background: "#534AB7",
+          background: "var(--tab-active)",
           color: "white",
           borderRadius: 20,
           padding: "4px 12px",

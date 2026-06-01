@@ -2,61 +2,87 @@
 import { useState } from "react";
 import { TabType } from "@/types";
 import { TAB_LABELS } from "@/constants/categories";
-import { exportAsImage, printElement } from "@/utils/exportImage";
+import { exportAsImage, exportAsBlob, printElement } from "@/utils/exportImage";
 
 interface Props {
   tab: TabType;
   onClear: () => void;
 }
 
-// Base64 데이터 URL을 모바일 Native 공유가 가능한 File 객체로 변환해 주는 헬퍼 함수
-const dataURLtoFile = (dataurl: string, filename: string): File => {
-  const arr = dataurl.split(",");
-  const mime = arr[0].match(/:(.*?);/)![1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new File([u8arr], filename, { type: mime });
-};
-
 export default function ActionBar({ tab, onClear }: Props) {
   const [isSaving, setIsSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
 
+  const closeModal = () => {
+    if (previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl("");
+    setShowModal(false);
+  };
+
   const handleSave = async () => {
     if (isSaving) return;
     setIsSaving(true);
-    
+
     try {
       const today = new Date();
       const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
       const fileName = `하루시계_${TAB_LABELS[tab]}_${dateStr}.png`;
-      
-      const dataUrl = await exportAsImage("clock-export-area", fileName);
-      if (!dataUrl) {
+
+      // 1. Blob으로 이미지 생성 (DataURL보다 메모리 효율적이며 다운로드에 유리함)
+      const blob = await exportAsBlob("clock-export-area");
+      if (!blob) {
         throw new Error("이미지 데이터를 생성할 수 없습니다.");
       }
 
-      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isMobile =
+        isAndroid ||
+        isIOS ||
+        /webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-      if (isMobileDevice) {
-        // 모바일 사파리 등에서 navigator.share 호출 시 "user gesture" 유실을 방지하기 위해 
-        // 1순위로 공유 API를 시도하고, 실패하거나 지원하지 않으면 모달 폴백을 사용합니다.
+      if (isAndroid) {
+        // (A) 안드로이드: 즉시 다운로드 (대부분의 안드로이드 갤러리는 다운로드 폴더를 자동 스캔함)
         try {
-          const file = dataURLtoFile(dataUrl, fileName);
+          const blob = await exportAsBlob("clock-export-area");
+          if (!blob) throw new Error("이미지 생성 실패");
+
+          const blobUrl = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = blobUrl;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          setPreviewUrl(blobUrl);
+          setShowModal(true);
+          setIsSaving(false);
+          return;
+        } catch (androidError) {
+          console.error("안드로이드 직접 저장 실패:", androidError);
+        }
+      }
+
+      if (isMobile) {
+        // iOS 등 모바일 대응: DataURL(Base64)이 <img> 태그 프리뷰에 더 안정적임
+        const dataUrl = await exportAsImage("clock-export-area", fileName);
+        if (!dataUrl) throw new Error("이미지 생성 실패");
+
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], fileName, { type: "image/png" });
+
+        // (A) 네이티브 공유 API 시도
+        try {
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
               files: [file],
               title: "나만의 하루시계 🗓",
               text: "손그림 감성 시계로 오늘 하루를 계획해 보세요!",
             });
-            // 성공적으로 공유 창이 뜨면 종료
             setIsSaving(false);
             return;
           }
@@ -64,11 +90,26 @@ export default function ActionBar({ tab, onClear }: Props) {
           console.warn("Native 공유 중 오류 또는 취소:", shareError);
         }
 
-        // 폴백: 저장 유도 모달 노출
+        // (B) 직접 다운로드 시도 (팝업 유도)
+        try {
+          const link = document.createElement("a");
+          link.href = dataUrl;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch (downloadError) {
+          console.error("모바일 직접 다운로드 시도 실패:", downloadError);
+        }
+
+        // (C) 폴백: 저장 유도 모달 노출 (iOS는 DataURL 사용)
         setPreviewUrl(dataUrl);
         setShowModal(true);
       } else {
-        // PC 대응: 다운로드
+        // PC 대응: 바로 다운로드
+        const dataUrl = await exportAsImage("clock-export-area", fileName);
+        if (!dataUrl) throw new Error("이미지 생성 실패");
+
         const link = document.createElement("a");
         link.href = dataUrl;
         link.download = fileName;
@@ -78,7 +119,9 @@ export default function ActionBar({ tab, onClear }: Props) {
       }
     } catch (error: any) {
       console.error("저장 중 오류 발생:", error);
-      alert(`이미지 저장에 실패했어요: ${error.message || "다시 시도해 주세요."}`);
+      alert(
+        `이미지 저장에 실패했어요: ${error.message || "다시 시도해 주세요."}`,
+      );
     } finally {
       setIsSaving(false);
     }
@@ -89,8 +132,8 @@ export default function ActionBar({ tab, onClear }: Props) {
       <div
         className="action-bar"
         style={{
-          background: "white",
-          borderTop: "1px solid #f0f0f0",
+          background: "var(--card-bg)",
+          borderTop: "1px solid var(--border-color)",
           padding: "12px 16px",
           display: "flex",
           alignItems: "center",
@@ -100,6 +143,7 @@ export default function ActionBar({ tab, onClear }: Props) {
           zIndex: 100,
           boxShadow: "0 -1px 8px rgba(0,0,0,0.04)",
           gap: 8,
+          transition: "background-color 0.3s ease, border-color 0.3s ease",
         }}
       >
         <button
@@ -111,21 +155,26 @@ export default function ActionBar({ tab, onClear }: Props) {
           ↺ 초기화
         </button>
         <div
-          style={{ display: "flex", gap: 8, flex: 1, justifyContent: "flex-end" }}
+          style={{
+            display: "flex",
+            gap: 8,
+            flex: 1,
+            justifyContent: "flex-end",
+          }}
         >
           <button className="print-btn" style={printBtn} onClick={printElement}>
             🖨 프린트
           </button>
-          <button 
+          <button
             style={{
               ...saveBtn,
               opacity: isSaving ? 0.7 : 1,
               cursor: isSaving ? "not-allowed" : "pointer",
-            }} 
+            }}
             onClick={handleSave}
             disabled={isSaving}
           >
-            {isSaving ? "💾 저장 중..." : "💾 이미지 저장"}
+            {isSaving ? "⏳ 준비 중..." : "💾 이미지 내보내기"}
           </button>
         </div>
 
@@ -145,7 +194,7 @@ export default function ActionBar({ tab, onClear }: Props) {
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0, 0, 0, 0.6)",
+            background: "rgba(0, 0, 0, 0.7)",
             backdropFilter: "blur(4px)",
             display: "flex",
             flexDirection: "column",
@@ -155,56 +204,74 @@ export default function ActionBar({ tab, onClear }: Props) {
             padding: 24,
             boxSizing: "border-box",
           }}
-          onClick={() => setShowModal(false)}
+          onClick={closeModal}
         >
           <div
+            className="modal-content"
             style={{
-              background: "white",
+              background: "var(--card-bg)",
               borderRadius: 20,
               padding: "24px 20px",
               maxWidth: "380px",
               width: "100%",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.4)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               gap: 16,
               boxSizing: "border-box",
+              transition: "background-color 0.3s ease",
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div
               style={{
                 fontFamily: '"Gaegu", cursive',
-                fontSize: 22,
-                fontWeight: 600,
-                color: "#534AB7",
+                fontSize: 24,
+                fontWeight: 700,
+                color: "var(--tab-active)",
                 textAlign: "center",
+                lineHeight: 1.3,
               }}
             >
-              🎉 나만의 하루시계 완성!
+              {/Android/i.test(navigator.userAgent)
+                ? "📸 갤러리에 저장되었어요!"
+                : "🎉 나만의 하루시계 완성!"}
             </div>
-            
+
             <div
               style={{
-                fontSize: 14,
-                color: "#666",
+                fontSize: 15,
+                color: "var(--foreground)",
                 textAlign: "center",
                 lineHeight: 1.5,
+                fontFamily: '"Gaegu", cursive',
+                opacity: 0.9,
               }}
             >
-              아래 이미지를 **길게 꾹 누르시면**<br />
-              사진첩에 안전하게 저장하실 수 있어요! 📸
+              {/Android/i.test(navigator.userAgent) ? (
+                <>
+                  다운로드 폴더를 확인해 보세요.
+                  <br />
+                  혹시 저장되지 않았다면 이미지를 꾹 눌러주세요!
+                </>
+              ) : (
+                <>
+                  아래 이미지를 <b>길게 꾹 누르시면</b>
+                  <br />
+                  사진첩에 안전하게 저장하실 수 있어요! 📸
+                </>
+              )}
             </div>
 
             <div
               style={{
                 width: "100%",
-                background: "#fdfdfd",
-                border: "1.5px dashed #EEEDFE",
+                background: "white",
+                border: "1.5px dashed var(--tab-active)",
                 borderRadius: 12,
                 overflow: "hidden",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                 display: "flex",
                 justifyContent: "center",
               }}
@@ -228,7 +295,7 @@ export default function ActionBar({ tab, onClear }: Props) {
                 width: "100%",
                 padding: "12px",
                 borderRadius: 12,
-                background: "#534AB7",
+                background: "var(--tab-active)",
                 color: "white",
                 border: "none",
                 fontFamily: '"Gaegu", cursive',
@@ -236,7 +303,7 @@ export default function ActionBar({ tab, onClear }: Props) {
                 cursor: "pointer",
                 boxShadow: "0 2px 6px rgba(83, 74, 183, 0.2)",
               }}
-              onClick={() => setShowModal(false)}
+              onClick={closeModal}
             >
               닫기
             </button>
@@ -250,9 +317,9 @@ export default function ActionBar({ tab, onClear }: Props) {
 const clearBtn: React.CSSProperties = {
   padding: "12px 16px",
   borderRadius: 12,
-  background: "#f5f5f5",
-  color: "#888",
-  border: "1px solid #e8e8e8",
+  background: "var(--input-bg)",
+  color: "var(--tab-inactive)",
+  border: "1px solid var(--border-color)",
   cursor: "pointer",
   fontSize: 15,
   whiteSpace: "nowrap",
@@ -261,9 +328,9 @@ const clearBtn: React.CSSProperties = {
 const printBtn: React.CSSProperties = {
   padding: "12px 16px",
   borderRadius: 12,
-  background: "white",
-  color: "#534AB7",
-  border: "1.5px solid #534AB7",
+  background: "transparent",
+  color: "var(--tab-active)",
+  border: "1.5px solid var(--tab-active)",
   cursor: "pointer",
   fontSize: 15,
   fontWeight: 500,
@@ -272,7 +339,7 @@ const printBtn: React.CSSProperties = {
 const saveBtn: React.CSSProperties = {
   padding: "12px 20px",
   borderRadius: 12,
-  background: "#534AB7",
+  background: "var(--tab-active)",
   color: "white",
   border: "none",
   cursor: "pointer",

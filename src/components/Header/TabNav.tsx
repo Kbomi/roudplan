@@ -21,8 +21,14 @@ const PATH_TO_TAB: { [key: string]: TabType } = {
 
 export default function TabNav() {
   const pathname = usePathname();
+  // URL 끝에 '/'가 붙어있을 경우를 대비해 정규화 처리 (예: '/life-plan/' -> '/life-plan')
+  const normalizedPathname =
+    pathname.length > 1 && pathname.endsWith("/")
+      ? pathname.slice(0, -1)
+      : pathname;
+
   // 현재 URL 경로를 파악하여 활성화된 탭 설정 (매칭되지 않으면 기본값 'life_plan')
-  const activeTab = PATH_TO_TAB[pathname] || "life_plan";
+  const activeTab = PATH_TO_TAB[normalizedPathname] || "life_plan";
 
   return (
     <header
@@ -71,7 +77,9 @@ export default function TabNav() {
                 border: isActive
                   ? "1.5px solid var(--tab-active)"
                   : "1.5px solid transparent",
-                background: isActive ? "rgba(154, 143, 255, 0.15)" : "transparent",
+                background: isActive
+                  ? "rgba(154, 143, 255, 0.15)"
+                  : "transparent",
                 color: isActive ? "var(--tab-active)" : "var(--tab-inactive)",
                 fontFamily: '"Gaegu", cursive',
                 fontSize: 17,

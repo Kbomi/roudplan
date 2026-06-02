@@ -1,14 +1,12 @@
 'use client';
-import { TabType } from '@/types';
-import { STICKER_SETS } from '@/constants/stickers';
+import { ALL_STICKERS } from '@/constants/stickers';
 
 interface Props {
-  tab: TabType;
   onStickerClick: (stickerDef: { emoji?: string; src?: string }) => void;
 }
 
-export default function StickerTray({ tab, onStickerClick }: Props) {
-  const stickers = STICKER_SETS[tab];
+export default function StickerTray({ onStickerClick }: Props) {
+  const stickers = ALL_STICKERS;
   return (
     <div>
       <div style={{ fontSize:13, color:'var(--tab-inactive)', fontWeight:500, marginBottom:6, transition: 'color 0.3s ease' }}>

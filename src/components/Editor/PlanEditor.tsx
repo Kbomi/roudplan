@@ -133,7 +133,7 @@ export default function PlanEditor({ tab }: Props) {
 
           {/* 스티커 트레이 */}
           <div className="no-print">
-            <StickerTray tab={tab} onStickerClick={addSticker} />
+            <StickerTray onStickerClick={addSticker} />
           </div>
 
           {/* 스티커 툴바 — 선택된 스티커 있을 때만 표시 */}

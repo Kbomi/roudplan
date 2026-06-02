@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Segment, TabType } from "@/types";
 import { PASTEL_COLORS } from "@/constants/colors";
-import { STICKER_SETS } from "@/constants/stickers";
+import { ALL_STICKERS } from "@/constants/stickers";
 import { CATEGORIES } from "@/constants/categories";
 import { generateTimeOptions } from "@/utils/clockMath";
 
@@ -81,7 +81,7 @@ export default function SegmentForm({
   };
 
   const categories = CATEGORIES[tab];
-  const stickers = STICKER_SETS[tab];
+  const stickers = ALL_STICKERS;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

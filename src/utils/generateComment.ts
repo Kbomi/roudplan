@@ -5,9 +5,15 @@ export function generateComment(tab: TabType, segments: Segment[]): string {
   if (tab === "life_plan") return "";
 
   if (tab === "baby_feed") {
-    const feedCount = segments.filter((s) =>
-      // s.emoji === '🍼' || s.emoji === '🤱' || s.label.includes('수유')
-      s.label.includes("수유"),
+    const mealCount = segments.filter(
+      (s) => s.label.includes("이유식") || s.label.includes("밥"),
+    ).length;
+    const feedCount = segments.filter(
+      (s) =>
+        // s.emoji === '🍼' || s.emoji === '🤱' || s.label.includes('수유')
+        s.label.includes("수유") ||
+        s.label.includes("분유") ||
+        s.label.includes("모유"),
     ).length;
     const sleepMins = segments
       // .filter(s => s.emoji === '😴' || s.label.includes('낮잠') || s.label.includes('수면'))
@@ -16,6 +22,7 @@ export function generateComment(tab: TabType, segments: Segment[]): string {
           s.label.includes("낮잠") ||
           s.label.includes("수면") ||
           s.label.includes("밤잠") ||
+          s.label.includes("꿈나라") ||
           s.label.includes("잠"),
       )
       .reduce(
@@ -25,7 +32,7 @@ export function generateComment(tab: TabType, segments: Segment[]): string {
         0,
       );
     const sleepH = Math.round((sleepMins / 60) * 10) / 10;
-    return `수유 ${feedCount}회 · 수면 ${sleepH}시간 🍼`;
+    return ` ${mealCount ? `이유식 ${mealCount}회 ${feedCount || sleepH ? "·" : ""}` : ""} ${feedCount ? `수유 ${feedCount}회 ${sleepH ? "·" : ""}` : ""} ${sleepH ? `수면 ${sleepH}시간 🍼` : ""}`;
   }
 
   // daily_record
